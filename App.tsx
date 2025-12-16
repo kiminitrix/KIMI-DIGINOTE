@@ -3,7 +3,7 @@ import { FileUpload } from './components/FileUpload';
 import { PresentationViewer } from './components/PresentationViewer';
 import { FileData, PresentationData } from './types';
 import { generatePresentation } from './services/geminiService';
-import { Layout, Sparkles } from 'lucide-react';
+import { Layout, BookOpen } from 'lucide-react';
 
 const App: React.FC = () => {
   const [status, setStatus] = useState<'idle' | 'processing' | 'viewing' | 'error'>('idle');
@@ -44,9 +44,9 @@ const App: React.FC = () => {
        <nav className="w-full p-6 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-2 text-white font-bold text-xl tracking-tight">
              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+                <BookOpen className="w-5 h-5 text-white" />
              </div>
-             SlideGen AI
+             KIMI DIGINOTE
           </div>
           <a href="#" className="text-slate-400 hover:text-white transition-colors text-sm">Documentation</a>
        </nav>

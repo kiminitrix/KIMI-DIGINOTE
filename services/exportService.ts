@@ -6,8 +6,8 @@ export const exportPresentation = async (data: PresentationData) => {
 
   pptx.layout = "LAYOUT_16x9";
   pptx.title = data.title;
-  pptx.author = "SlideGen AI";
-  pptx.company = "SlideGen AI";
+  pptx.author = "KIMI DIGINOTE";
+  pptx.company = "KIMI DIGINOTE";
 
   // Common styles
   const bgDark = { color: "0F172A" }; // Slate 900
