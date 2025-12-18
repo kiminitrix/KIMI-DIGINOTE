@@ -4,6 +4,7 @@ import { TitleSlide } from './slides/TitleSlide';
 import { ContentWithImage } from './slides/ContentWithImage';
 import { BulletPoints } from './slides/BulletPoints';
 import { SectionHeader } from './slides/SectionHeader';
+import { GraphSlide } from './slides/GraphSlide';
 
 interface SlideRendererProps {
   slide: Slide;
@@ -16,10 +17,12 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({ slide }) => {
     case SlideType.ContentWithImage:
       return <ContentWithImage content={slide.content} />;
     case SlideType.BulletPoints:
-    case SlideType.Summary: // Fallback to BulletPoints for Summary for now
+    case SlideType.Summary:
       return <BulletPoints content={slide.content} />;
     case SlideType.SectionHeader:
       return <SectionHeader content={slide.content} />;
+    case SlideType.Graph:
+      return <GraphSlide content={slide.content} />;
     default:
       return (
         <div className="flex items-center justify-center h-full text-slate-500">

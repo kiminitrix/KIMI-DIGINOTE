@@ -3,7 +3,16 @@ export enum SlideType {
   ContentWithImage = 'ContentWithImage',
   BulletPoints = 'BulletPoints',
   SectionHeader = 'SectionHeader',
-  Summary = 'Summary'
+  Summary = 'Summary',
+  Graph = 'Graph'
+}
+
+export interface ChartData {
+  type: 'bar' | 'line' | 'pie';
+  title: string;
+  labels: string[]; // X-axis categories
+  data: number[];   // Y-axis values
+  dataLabel: string; // Label for the dataset
 }
 
 export interface SlideContent {
@@ -12,6 +21,7 @@ export interface SlideContent {
   points?: string[];
   image_prompt?: string;
   body?: string;
+  chart?: ChartData;
 }
 
 export interface Slide {

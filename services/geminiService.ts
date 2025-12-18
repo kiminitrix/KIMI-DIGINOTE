@@ -8,8 +8,8 @@ const slideSchema = {
     id: { type: Type.INTEGER, description: "Sequential ID of the slide" },
     type: {
       type: Type.STRING,
-      enum: ["TitleSlide", "ContentWithImage", "BulletPoints", "SectionHeader", "Summary"],
-      description: "The layout type of the slide."
+      enum: ["TitleSlide", "ContentWithImage", "BulletPoints", "SectionHeader", "Summary", "Graph"],
+      description: "The layout type of the slide. Use 'Graph' when numerical data is present."
     },
     content: {
       type: Type.OBJECT,
@@ -19,10 +19,21 @@ const slideSchema = {
         points: {
           type: Type.ARRAY,
           items: { type: Type.STRING },
-          description: "Bullet points for content slides"
+          description: "Detailed bullet points. Do not summarize excessively."
         },
         image_prompt: { type: Type.STRING, description: "Visual description for image generation if needed" },
-        body: { type: Type.STRING, description: "Paragraph text if applicable" }
+        body: { type: Type.STRING, description: "Detailed paragraph text if applicable" },
+        chart: {
+          type: Type.OBJECT,
+          properties: {
+            type: { type: Type.STRING, enum: ['bar', 'line', 'pie'], description: "Best chart type for the data" },
+            title: { type: Type.STRING, description: "Title of the chart" },
+            labels: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Labels for X-axis or Segments" },
+            data: { type: Type.ARRAY, items: { type: Type.NUMBER }, description: "Numerical values corresponding to labels" },
+            dataLabel: { type: Type.STRING, description: "Name of the dataset (e.g., 'Revenue', 'Sales')" }
+          },
+          description: "Structure data here if slide type is Graph"
+        }
       }
     }
   },
@@ -52,16 +63,16 @@ export const generatePresentation = async (file: FileData): Promise<Presentation
   const modelId = "gemini-2.5-flash"; // Excellent for document processing
 
   const prompt = `
-    You are an expert presentation designer.
+    You are an expert presentation designer and data analyst.
     Analyze the attached document content.
-    Extract the key information and structure it into a compelling slide deck.
     
-    Guidelines:
-    1. Create a logical flow: Title -> Introduction -> Key Points -> Conclusion.
-    2. Summarize dense text into punchy bullet points.
-    3. Suggest an image prompt for slides that need visuals.
-    4. Ensure at least 5 slides are generated.
-    5. Output STRICT JSON following the schema provided.
+    CRITICAL INSTRUCTIONS:
+    1. **DATA ACCURACY**: You must retain 100% of the key information from the file. Do not over-simplify. If the source text is detailed, create multiple slides to cover the details rather than cutting content.
+    2. **GRAPHS & CHARTS**: If the document contains CSV data, financial tables, or statistical lists, you MUST create 'Graph' slides. Visualize the numbers.
+    3. **STRUCTURE**: Logical flow: Title -> Introduction -> Comprehensive Details (Chunked) -> Visual Data (Graphs) -> Conclusion.
+    4. **CONTENT**: Use 'BulletPoints' for text lists, 'ContentWithImage' for conceptual sections, and 'Graph' for numerical data.
+    
+    Output STRICT JSON following the schema provided.
   `;
 
   try {
@@ -84,7 +95,7 @@ export const generatePresentation = async (file: FileData): Promise<Presentation
       config: {
         responseMimeType: "application/json",
         responseSchema: presentationSchema,
-        temperature: 0.2, // Low temperature for consistent formatting
+        temperature: 0.1, // Very low temperature for high fidelity to source
       }
     });
 

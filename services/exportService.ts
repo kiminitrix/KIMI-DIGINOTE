@@ -13,8 +13,7 @@ export const exportPresentation = async (data: PresentationData) => {
   const bgDark = { color: "0F172A" }; // Slate 900
   const textWhite = { color: "FFFFFF" };
   const textMuted = { color: "94A3B8" }; // Slate 400
-  const accentBlue = { color: "3B82F6" }; // Blue 500
-
+  
   for (const [index, slide] of data.slides.entries()) {
     const slidePage = pptx.addSlide();
     
@@ -59,6 +58,43 @@ export const exportPresentation = async (data: PresentationData) => {
                 x: 0, y: 4.5, w: "100%", h: 0.5,
                 fontSize: 18, align: "center", italic: true, ...textMuted
              });
+        }
+        break;
+
+      case SlideType.Graph:
+        if (slide.content.chart) {
+            slidePage.addText(slide.content.title, {
+                x: 0.5, y: 0.5, w: "90%", h: 1,
+                fontSize: 32, bold: true, ...textWhite
+            });
+
+            const chartData = [
+                {
+                    name: slide.content.chart.dataLabel,
+                    labels: slide.content.chart.labels,
+                    values: slide.content.chart.data
+                }
+            ];
+
+            let chartType = pptx.ChartType.bar;
+            if (slide.content.chart.type === 'line') chartType = pptx.ChartType.line;
+            if (slide.content.chart.type === 'pie') chartType = pptx.ChartType.pie;
+
+            slidePage.addChart(chartType, chartData, { 
+                x: 0.5, y: 1.8, w: 9, h: 5,
+                showLegend: true,
+                legendPos: 'r',
+                showTitle: false,
+                chartColors: ['3B82F6', '8B5CF6', 'F43F5E', '10B981', 'F59E0B', '6366F1'],
+                chartColorsOpacity: 80
+            });
+            
+            if (slide.content.body) {
+                slidePage.addText(slide.content.body, {
+                    x: 0.5, y: 6.9, w: "90%", h: 0.5,
+                    fontSize: 12, color: "94A3B8"
+                });
+            }
         }
         break;
 
